@@ -20,7 +20,9 @@ func checkError(context debos.DebosContext, err error, a debos.Action, stage str
 	}
 
 	log.Printf("Action `%s` failed at stage %s, error: %s", a, stage, err)
-	debos.DebugShell(context)
+	if stage != "Postmachine" {
+		debos.DebugShell(context)
+	}
 	return 1
 }
 
