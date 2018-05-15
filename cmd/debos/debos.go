@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -119,6 +120,16 @@ func main() {
 			return
 		}
 	}
+
+	// Log to file as well, often logs are too long and don't fit in the terminal,
+	// therefore the end of the line is missing.
+	logFile, err := os.OpenFile("logs.txt", os.O_CREATE | os.O_APPEND | os.O_RDWR, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
 
 	if !fakemachine.InMachine() && fakemachine.Supported() {
 		m := fakemachine.NewMachine()
