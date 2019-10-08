@@ -39,6 +39,7 @@ HoldPkg  = pacman glibc
 Architecture = auto
 CheckSpace
 SigLevel = Required DatabaseOptional TrustAll
+DisableDownloadTimeout
 `
 
 const configRepoSection = `
