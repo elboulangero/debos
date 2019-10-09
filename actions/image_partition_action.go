@@ -38,6 +38,7 @@ Yaml syntax for partitions:
    partitions:
      - name: label
 	   name: partition name
+	   type: partition type
 	   fs: filesystem
 	   start: offset
 	   end: offset
@@ -62,6 +63,8 @@ For 'start' and 'end' properties offset can be written in human readable
 form -- '32MB', '1GB' or as disk percentage -- '100%'.
 
 Optional properties:
+
+- type -- the partition type (hexadecimal for msdos, or a GUID for gpt)
 
 - features -- list of additional filesystem features which need to be enabled
 for partition.
@@ -116,6 +119,7 @@ Layout example for Raspberry PI 3:
        start: 0%
        end: 64MB
      - name: root
+       type: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
        label: rootfs
        fs: ext4
        start: 64MB
@@ -135,6 +139,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -146,6 +151,7 @@ type Partition struct {
 	number   int
 	Name     string
 	Label    string
+	Type     string
 	Start    string
 	End      string
 	FS       string
@@ -403,6 +409,13 @@ func (i ImagePartitionAction) Run(context *debos.DebosContext) error {
 				if err != nil {
 					return err
 				}
+			}
+		}
+
+		if len(p.Type) > 0 {
+			err = debos.Command{}.Run("sfdisk", "sfdisk", "--part-type", context.Image, strconv.Itoa(idx + 1), p.Type)
+			if err != nil {
+				return err
 			}
 		}
 
