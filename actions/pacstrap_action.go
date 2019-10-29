@@ -37,7 +37,6 @@ GPGDir   = %[1]s/etc/pacman.d/gnupg/
 HookDir  = %[1]s/etc/pacman.d/hooks/
 HoldPkg  = pacman glibc
 Architecture = auto
-CheckSpace
 SigLevel = Required DatabaseOptional TrustAll
 DisableDownloadTimeout
 `
